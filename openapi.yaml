@@ -26,55 +26,89 @@ paths:
                   status:
                     type: integer
                     example: 200
+                    description: Status odpovědi
                   data:
                     type: object
+                    description: JSON objekt s daty
                     properties:
                       name:
                         type: string
+                        description: Jméno API
                       api_author:
                         type: string
+                        description: Autor API
                       api_version:
                         type: string
+                        description: Verze API
                       docs:
                         type: string
+                        description: Odkaz na dokumentaci
                       supported_formats:
                         type: array
+                        description: Pole podporovaných formátů
                         items:
                           type: string
                       utc_time:
                         type: string
                         format: date-time
+                        description: Čas na serveru
                       db_info:
                         type: object
+                        description: JSON objekt s informacemi o databázi
                         properties:
                           connected:
                             type: boolean
+                            description: Stav připojení k databázi
                           db_time:
                             type: string
                             nullable: true
+                            description: Čas databáze. Může být null, pokud db není připojena
                           db_version:
                             type: string
                             nullable: true
+                            description: Verze databáze. Může být null, pokud db není připojena
+                          error:
+                            type: string
+                            nullable: true
+                            description: Výpis erroru pokud selže připojení k databázi. Může být null, pokud je db připojena.
                       server_info:
                         type: string
+                        description: Informace o serveru - funkce php_uname()
                       php_version:
                         type: string
-              example:
-                status: 200
-                data:
-                  name: "School API"
-                  api_author: "rybovka"
-                  api_version: "1.0.0"
-                  docs: "https://s-api.gitbook.io/s_api"
-                  supported_formats:
-                    - "json"
-                  utc_time: "2026-02-02T18:24:50Z"
-                  db_info:
-                    connected: true
-                    db_time: "2026-02-02 19:26:18"
-                    db_version: "5.5.68-MariaDB"
-                  server_info: "Linux public 5.14.0-611.16.1.el9_7.x86_64"
-                  php_version: "8.5.1"
+                        description: Verze PHP
+              examples:
+                ok:
+                  status: 200
+                  data:
+                    name: "School API"
+                    api_author: "rybovka"
+                    api_version: "1.0.0"
+                    docs: "https://s-api.gitbook.io/s_api"
+                    supported_formats:
+                      - "json"
+                    utc_time: "2026-02-02T18:24:50Z"
+                    db_info:
+                      connected: true
+                      db_time: "2026-02-02 19:26:18"
+                      db_version: "5.5.68-MariaDB"
+                    server_info: "Linux public 5.14.0-611.16.1.el9_7.x86_64"
+                    php_version: "8.5.1"
+                db_down:
+                  status: 200
+                  data:
+                    name: "School API"
+                    api_author: "rybovka"
+                    api_version: "1.0.0"
+                    docs: "https://s-api.gitbook.io/s_api"
+                    supported_formats:
+                      - "json"
+                    utc_time: "2026-02-02T18:24:50Z"
+                    db_info:
+                      connected: false
+                      error: "chybova hlaska"
+                    server_info: "Linux public 5.14.0-611.16.1.el9_7.x86_64"
+                    php_version: "8.5.1"
 
         '400':
           description: Chybná metoda. Nutno použít GET
@@ -83,3 +117,12 @@ paths:
               example:
                 status: 400
                 error: "nespravna metoda, pouzijte GET"
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Status odpovědi
+                  error:
+                    type: string
+                    description: Chybová hláška
