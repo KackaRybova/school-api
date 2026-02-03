@@ -15,21 +15,52 @@ paths:
       description: >
         Endpoint vrací informace o verzi API, serveru, databázi a stavu připojení.
       responses:
-        '200':
-          description: Úspěšná odpověď
-          content:
-            application/json:
-              example:
-                name: "School API"
-                api_author: "rybovka"
-                api_version: "1.0.0"
-                docs: "dokumentace zde"
-                supported_formats:
-                  - "json"
-                utc_time: "2026-02-02T18:24:50Z"
-                db_info:
-                  connected: true
-                  db_time: "2026-02-02 19:26:18"
-                  db_version: "5.5.68-MariaDB"
-                server_info: "Linux public 5.14.0-611.16.1.el9_7.x86_64 #1 SMP PREEMPT_DYNAMIC Mon Dec 22 03:40:39 EST 2025 x86_64"
-                php_version: "8.5.1"
+  '200':
+    description: Úspěšná odpověď
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            api_author:
+              type: string
+            api_version:
+              type: string
+            docs:
+              type: string
+            supported_formats:
+              type: array
+              items:
+                type: string
+            utc_time:
+              type: string
+              format: date-time
+            db_info:
+              type: object
+              properties:
+                connected:
+                  type: boolean
+                db_time:
+                  type: string
+                db_version:
+                  type: string
+            server_info:
+              type: string
+            php_version:
+              type: string
+        example:
+          name: "School API"
+          api_author: "rybovka"
+          api_version: "1.0.0"
+          docs: "https://s-api.gitbook.io/s_api/"
+          supported_formats:
+            - "json"
+          utc_time: "2026-02-02T18:24:50Z"
+          db_info:
+            connected: true
+            db_time: "2026-02-02 19:26:18"
+            db_version: "5.5.68-MariaDB"
+          server_info: "Linux public 5.14.0-611.16.1.el9_7.x86_64 #1 SMP PREEMPT_DYNAMIC Mon Dec 22 03:40:39 EST 2025 x86_64"
+          php_version: "8.5.1"
