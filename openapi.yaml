@@ -3,9 +3,7 @@ info:
   title: School API
   version: 1.0.0
   description: >
-    API pro školní projekt – poskytuje informace o serveru, databázi a dalších funkcích.
-    Endpoint vždy vrací status 200, i pokud databáze není připojena. Informace o připojení
-    je uvedena v poli db_info->connected.
+    School API poskytuje data o školách v ČR, včetně adres, oborů, kapacit a kontaktních údajů. Je vhodné pro mapové aplikace, vyhledávače škol, statistiky a školní projekty.
 
 servers:
   - url: https://rybovka23.sps-prosek.cz/Weby/api_endpoint
