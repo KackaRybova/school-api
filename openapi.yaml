@@ -79,36 +79,38 @@ paths:
                         description: Verze PHP
               examples:
                 ok:
-                  status: 200
-                  data:
-                    name: "School API"
-                    api_author: "rybovka"
-                    api_version: "1.0.0"
-                    docs: "https://s-api.gitbook.io/s_api"
-                    supported_formats:
-                      - "json"
-                    utc_time: "2026-02-02T18:24:50Z"
-                    db_info:
-                      connected: true
-                      db_time: "2026-02-02 19:26:18"
-                      db_version: "5.5.68-MariaDB"
-                    server_info: "Linux public 5.14.0-611.16.1.el9_7.x86_64"
-                    php_version: "8.5.1"
+                  value:
+                    status: 200
+                    data:
+                      name: "School API"
+                      api_author: "rybovka"
+                      api_version: "1.0.0"
+                      docs: "https://s-api.gitbook.io/s_api"
+                      supported_formats:
+                        - "json"
+                      utc_time: "2026-02-02T18:24:50Z"
+                      db_info:
+                        connected: true
+                        db_time: "2026-02-02 19:26:18"
+                        db_version: "5.5.68-MariaDB"
+                      server_info: "Linux public 5.14.0-611.16.1.el9_7.x86_64"
+                      php_version: "8.5.1"
                 db_down:
-                  status: 200
-                  data:
-                    name: "School API"
-                    api_author: "rybovka"
-                    api_version: "1.0.0"
-                    docs: "https://s-api.gitbook.io/s_api"
-                    supported_formats:
-                      - "json"
-                    utc_time: "2026-02-02T18:24:50Z"
-                    db_info:
-                      connected: false
-                      error: "chybova hlaska"
-                    server_info: "Linux public 5.14.0-611.16.1.el9_7.x86_64"
-                    php_version: "8.5.1"
+                  value:
+                    status: 200
+                    data:
+                      name: "School API"
+                      api_author: "rybovka"
+                      api_version: "1.0.0"
+                      docs: "https://s-api.gitbook.io/s_api"
+                      supported_formats:
+                        - "json"
+                      utc_time: "2026-02-02T18:24:50Z"
+                      db_info:
+                        connected: false
+                        error: "chybova hlaska"
+                      server_info: "Linux public 5.14.0-611.16.1.el9_7.x86_64"
+                      php_version: "8.5.1"
 
         '400':
           description: Chybná metoda. Nutno použít GET
