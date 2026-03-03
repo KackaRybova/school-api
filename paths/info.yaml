@@ -111,9 +111,9 @@ get:
             error: "nespravna metoda, pouzijte GET"
           schema:
             type: object
-              properties:
-                status:
-                  type: integer
+            properties:
+              status:
+                type: integer
                   description: Status odpovědi
                 error:
                   type: string
