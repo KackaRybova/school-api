@@ -1,0 +1,159 @@
+get:
+  summary: Výpis škol z databáze
+  description: >
+    Endpoint vrací stránkovaný seznam škol z databáze. Umožňuje nastavit počet položek
+    na stránku pomocí parametru `per` a přepínat stránky pomocí parametru `page`.
+    Vrací také meta informace o stránkování a odkazy na další/ předchozí stránky.
+
+  parameters:
+    - in: query
+      name: page
+      schema:
+        type: integer
+        minimum: 1
+      required: false
+      description: Číslo aktuální stránky (výchozí hodnota je 1)
+
+    - in: query
+      name: per
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+      required: false
+      description: Počet položek zobrazených na jednotlivé stránce (výchozí hodnota je 10)
+
+  responses:
+    '200':
+      description: Úspěšná odpověď stránky se seznamem škol
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                description: Informace o stránkování
+                properties:
+                  page:
+                    type: integer
+                    example: 1
+                    description: číslo aktuální stránky
+                  per_page:
+                    type: integer
+                    example: 10
+                    description: počet položek zobrazených na jedné stránce
+                  page_count:
+                    type: integer
+                    example: 996
+                    description: celkový počet stránek
+                  total_count:
+                    type: integer
+                    example: 9954
+                    description: celkový počet záznamů (škol) v databázi
+                  links:
+                    type: object
+                    nullable: true
+                    description: odkazy na ostatní stránky. Může být null, pokud nejsou dostupná žádná data
+                    properties:
+                      self:
+                        type: string
+                        example: "https://rybovka23.sps-prosek.cz/Weby/api_endpoint/items.php?page=1"
+                        description: odkaz na aktuální stránku
+                      first:
+                        type: string
+                        example: "https://rybovka23.sps-prosek.cz/Weby/api_endpoint/items.php?page=1"
+                        description: odkaz na první stránku
+                      last:
+                        type: string
+                        example: "https://rybovka23.sps-prosek.cz/Weby/api_endpoint/items.php?page=996"
+                        description: odkaz na poslední stránku
+                      next:
+                        type: string
+                        nullable: true
+                        example: "https://rybovka23.sps-prosek.cz/Weby/api_endpoint/items.php?page=2"
+                        description: odkaz na další stránku. Je null, pokud není dostupná žádná další stránka
+                      previous:
+                        type: string
+                        nullable: true
+                        example: null
+                        description: odkaz na předchozí stránku. Je null, pokud není žádná předchozí stránka
+
+              data:
+                type: array
+                description: Pole s jednotlivými školami na dané stránce
+                items:
+                  type: object
+                  properties:
+                    s_id:
+                      type: integer
+                      example: 41
+                    s_red_izo:
+                      type: string
+                      example: "600001008"
+                      description: red izo školy (resortní identifikátor právnické osoby). Slouží jako hlavní identifikátor školy
+                    s_ico:
+                      type: integer
+                      example: 47813245
+                      description: ičo školy
+                    s_dis:
+                      type: string
+                      example: "Moravskoslezský kraj"
+                      description: kraj ve kterém se škola nachází
+                    s_full_name:
+                      type: string
+                      example: "Církevní mateřská škola"
+                      description: celý název školy
+                    s_nick:
+                      type: string
+                      example: "Církevní mateřská škola"
+                      description: zkrácený název školy
+                    s_legal_form:
+                      type: string
+                      example: "641"
+                      description: kód právní formy (číselník BBPF)
+                    s_estab_type:
+                      type: string
+                      example: "6"
+                      description: kód typu zřizovatele (číselník BAZS)
+
+          examples:
+            ok:
+              value:
+                meta:
+                  page: 5
+                  per_page: 10
+                  page_count: 996
+                  total_count: 9954
+                  links:
+                    self: "https://rybovka23.sps-prosek.cz/Weby/api_endpoint/items.php?page=5"
+                    first: "https://rybovka23.sps-prosek.cz/Weby/api_endpoint/items.php?page=1"
+                    last: "https://rybovka23.sps-prosek.cz/Weby/api_endpoint/items.php?page=996"
+                    next: "https://rybovka23.sps-prosek.cz/Weby/api_endpoint/items.php?page=6"
+                    previous: "https://rybovka23.sps-prosek.cz/Weby/api_endpoint/items.php?page=4"
+                data:
+                  - s_id: 41
+                    s_red_izo: "600001008"
+                    s_ico: 47813245
+                    s_dis: "Moravskoslezský kraj"
+                    s_full_name: "Církevní mateřská škola"
+                    s_nick: "Církevní mateřská škola"
+                    s_legal_form: "641"
+                    s_estab_type: "6"
+
+    '400':
+      description: Chybná metoda – endpoint podporuje pouze GET
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                description: status odpovědi
+              error:
+                type: string
+                description: chybová hláška
+          example:
+            status: 400
+            error: "nespravna metoda, pouzijte GET"
