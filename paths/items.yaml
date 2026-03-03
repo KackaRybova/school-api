@@ -142,7 +142,13 @@ get:
                     s_nick: "Církevní mateřská škola"
                     s_legal_form: "641"
                     s_estab_type: "6"
-
+            db_down:
+              value:
+                status: 200
+                error: "selhalo pripojeni k databazi"
+                db_info:
+                  connected: false
+                  error: "chybova hlaska"
     '400':
       description: Chybná metoda 
       content:
