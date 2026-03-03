@@ -118,5 +118,3 @@ get:
                 error:
                   type: string
                   description: Chybová hláška
-            status: 400
-            error: "nespravna metoda, pouzijte GET"
