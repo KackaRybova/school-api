@@ -14,7 +14,7 @@ get:
         type: integer
         minimum: 1
       required: false
-      description: Číslo aktuální stránky (výchozí hodnota je 1). Číslo musí být kladné a nesmí být větší než celkový počet stran, jinak je automaticky hodnota strany 1
+      description: Číslo aktuální stránky (výchozí hodnota je 1). Pokud vstup není celé kladné číslo menší než celkový počet stran, je hodnota defaultně nastavena na 1
 
     - in: query
       name: per
@@ -23,7 +23,7 @@ get:
         minimum: 1
         maximum: 100
       required: false
-      description: Počet položek zobrazených na jednotlivé stránce (výchozí hodnota je 10). Pokud je hodnota mimo platný rozsah je automaticky nastavena na 10
+      description: Počet položek zobrazených na jednotlivé stránce (výchozí hodnota je 10). Pokud je hodnota mimo platný rozsah nebo to není číslo, je hodnota defaultně nastavena na 10
 
   responses:
     '200':
