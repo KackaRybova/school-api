@@ -5,6 +5,8 @@ get:
     na stránku pomocí parametru `per` a přepínat stránky pomocí parametru `page`.
     Vrací také meta informace o stránkování a odkazy na další/ předchozí stránky.
 
+    Příklad použití: /Weby/api_endpoint/items.php?page=2&per=50
+
   parameters:
     - in: query
       name: page
@@ -12,7 +14,7 @@ get:
         type: integer
         minimum: 1
       required: false
-      description: Číslo aktuální stránky (výchozí hodnota je 1)
+      description: Číslo aktuální stránky (výchozí hodnota je 1). Číslo musí být kladné a nesmí být větší než celkový počet stran, jinak je automaticky hodnota strany 1
 
     - in: query
       name: per
@@ -21,11 +23,11 @@ get:
         minimum: 1
         maximum: 100
       required: false
-      description: Počet položek zobrazených na jednotlivé stránce (výchozí hodnota je 10)
+      description: Počet položek zobrazených na jednotlivé stránce (výchozí hodnota je 10). Pokud je hodnota mimo platný rozsah je automaticky nastavena na 10
 
   responses:
     '200':
-      description: Úspěšná odpověď stránky se seznamem škol
+      description: Úspěšná odpověď 
       content:
         application/json:
           schema:
@@ -142,7 +144,7 @@ get:
                     s_estab_type: "6"
 
     '400':
-      description: Chybná metoda – endpoint podporuje pouze GET
+      description: Chybná metoda 
       content:
         application/json:
           schema:
