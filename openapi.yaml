@@ -12,3 +12,5 @@ servers:
 paths:
   /info.php:
     $ref: "./paths/info.yaml"
+  /items.php:
+    $ref: "./paths/items.yaml"
