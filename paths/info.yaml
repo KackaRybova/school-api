@@ -114,7 +114,7 @@ get:
             properties:
               status:
                 type: integer
-                  description: Status odpovědi
-                error:
-                  type: string
-                  description: Chybová hláška
+                description: Status odpovědi
+              error:
+                type: string
+                description: Chybová hláška
