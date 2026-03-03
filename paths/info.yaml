@@ -39,7 +39,7 @@ get:
                   utc_time:
                     type: string
                     format: date-time
-                    description: Čas na serveru
+                    description: Čas na serveru ve formátu YYYY-MM-DD HH:MM:SS (ISO 8601)  
                   db_info:
                     type: object
                     description: JSON objekt s informacemi o databázi
@@ -50,7 +50,7 @@ get:
                       db_time:
                         type: string
                         nullable: true
-                        description: Čas databáze. Může být null, pokud db není připojeno
+                        description: Čas databáze ve formátu YYYY-MM-DD HH:MM:SS. Může být null, pokud db není připojeno
                       db_version:
                         type: string
                         nullable: true
