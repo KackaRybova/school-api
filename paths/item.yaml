@@ -1,0 +1,278 @@
+get:
+  summary: Detail školy podle ID nebo RED IZO
+  description: >
+    Endpoint vrací detailní informace o jedné škole. Školu lze vyhledat pomocí
+    parametru `id` (interní ID školy) nebo `red_izo` (RED IZO školy).
+    Parametr `scope` určuje rozsah vrácených dat:
+    - `basic` – základní informace o škole
+    - `mid` – základ + adresa, emaily, ředitel
+    - `all` – vše včetně budov, kapacit, oborů a míst výkonu činnosti
+
+  parameters:
+    - in: query
+      name: id
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+      description: >
+        Interní ID školy. Pokud není zadáno, použije se hodnota 1.
+        Musí být v rozsahu celkového počtu škol.
+
+    - in: query
+      name: red_izo
+      required: false
+      schema:
+        type: string
+        pattern: "^[6][0-9]{8}$"
+      description: >
+        RED IZO školy. Musí mít 9 číslic a začínat číslem 6.
+
+    - in: query
+      name: scope
+      required: false
+      schema:
+        type: string
+        enum: [basic, mid, all]
+        default: basic
+      description: >
+        Určuje rozsah vrácených dat:
+        - basic: základní informace
+        - mid: základ + adresa, emaily, ředitel
+        - all: vše včetně budov, kapacit, oborů a míst výkonu činnosti
+
+  responses:
+    '200':
+      description: Úspěšná odpověď s detailem školy
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  total_count:
+                    type: integer
+                    example: 9954
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: integer
+                        example: 1
+                      last:
+                        type: integer
+                        example: 9954
+                      next:
+                        type: integer
+                        nullable: true
+                        example: 2
+                      previous:
+                        type: integer
+                        nullable: true
+                        example: null
+
+              data:
+                type: object
+                properties:
+                  s_id:
+                    type: integer
+                  s_red_izo:
+                    type: string
+                  s_ico:
+                    type: integer
+                  s_dis:
+                    type: string
+                  s_full_name:
+                    type: string
+                  s_nick:
+                    type: string
+                  s_legal_form:
+                    type: string
+                  s_estab_type:
+                    type: string
+
+                  address:
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+                      properties:
+                        a_street: { type: string }
+                        a_h_num: { type: integer }
+                        a_type_h: { type: string }
+                        a_d_num: { type: integer }
+                        a_reg: { type: string }
+                        a_reg_part: { type: string }
+                        a_num_reg_p: { type: string }
+                        a_psc: { type: string }
+                        a_ruian: { type: integer }
+                        a_dis: { type: string }
+
+                  emails:
+                    type: array
+                    nullable: true
+                    items:
+                      type: string
+
+                  principal:
+                    type: object
+                    nullable: true
+                    properties:
+                      p_per: { type: string }
+                      p_stat: { type: integer }
+                      p_creation_fc: { type: string, format: date }
+
+                  building:
+                    type: array
+                    nullable: true
+                    items:
+                      type: object
+                      properties:
+                        b_izo: { type: string }
+                        b_full_name: { type: string }
+                        b_type: { type: string }
+                        b_lang: { type: string }
+                        b_date_or: { type: string, format: date }
+                        b_date_work: { type: string, format: date }
+
+                        capacity:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              c_unit: { type: string }
+                              c_count: { type: integer }
+
+                        fields:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              f_code: { type: string }
+                              f_name: { type: string }
+                              f_form_edu: { type: string }
+                              f_len_edu: { type: string }
+                              f_lang: { type: string }
+                              f_capacity: { type: integer }
+                              f_unit: { type: string }
+                              f_ending: { type: string }
+
+                        places:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              pl_id: { type: string }
+                              pl_type: { type: string }
+                              pl_street: { type: string }
+                              pl_h_num: { type: integer }
+                              pl_type_h: { type: string }
+                              pl_d_num: { type: integer }
+                              pl_reg: { type: string }
+                              pl_peg_part: { type: string }
+                              pl_num_reg_p: { type: string }
+                              pl_psc: { type: string }
+                              pl_ruian: { type: integer }
+                              pl_dis: { type: string }
+
+          examples:
+            all_scope:
+              value:
+                meta:
+                  total_count: 9954
+                  links:
+                    self: 1
+                    last: 9954
+                    next: 2
+                    previous: null
+                data:
+                  s_id: 1
+                  s_red_izo: "600000206"
+                  s_ico: 49625918
+                  s_dis: "Hlavní město Praha"
+                  s_full_name: "Mateřská škola sv. Voršily v Praze"
+                  s_nick: "Mateřská škola sv. Voršily v Praze"
+                  s_legal_form: "641"
+                  s_estab_type: "6"
+                  address:
+                    - a_street: "Ostrovní"
+                      a_h_num: 139
+                      a_type_h: "č.p."
+                      a_d_num: 11
+                      a_reg: "Praha"
+                      a_reg_part: "Nové Město"
+                      a_num_reg_p: "Praha 1"
+                      a_psc: "110 00"
+                      a_ruian: 21702101
+                      a_dis: "CZ0101"
+                  emails:
+                    - "reditelka@mssvvorsily.cz"
+                    - "cmsostrovni@tiscali.cz"
+                  principal:
+                    p_per: "Anna Luňáčková"
+                    p_stat: 1
+                    p_creation_fc: "1996-05-16"
+                  building:
+                    - b_izo: "049625918"
+                      b_full_name: "Mateřská škola"
+                      b_type: "A00"
+                      b_lang: "100"
+                      b_date_or: "2005-01-01"
+                      b_date_work: "1996-05-16"
+                      capacity:
+                        - c_unit: "04"
+                          c_count: 54
+                      fields: []
+                      places:
+                        - pl_id: "049625918"
+                          pl_type: "A10"
+                          pl_street: "Ostrovní"
+                          pl_h_num: 139
+                          pl_type_h: "č.p."
+                          pl_d_num: 11
+                          pl_reg: "Praha"
+                          pl_peg_part: "Nové Město"
+                          pl_num_reg_p: "Praha 1"
+                          pl_psc: "110 00"
+                          pl_ruian: 21702101
+                          pl_dis: ""
+                    - b_izo: "102413096"
+                      b_full_name: "Školní jídelna"
+                      b_type: "L11"
+                      b_lang: "100"
+                      b_date_or: "2005-01-01"
+                      b_date_work: "1996-05-16"
+                      capacity:
+                        - c_unit: "03"
+                          c_count: 90
+                      fields: []
+                      places:
+                        - pl_id: "102413096"
+                          pl_type: "L11"
+                          pl_street: "Ostrovní"
+                          pl_h_num: 139
+                          pl_type_h: "č.p."
+                          pl_d_num: 11
+                          pl_reg: "Praha"
+                          pl_peg_part: "Nové Město"
+                          pl_num_reg_p: "Praha 1"
+                          pl_psc: "110 00"
+                          pl_ruian: 21702101
+                          pl_dis: ""
+    '400':
+      description: Chybná metoda – endpoint podporuje pouze GET
+      content:
+        application/json:
+          example:
+            status: 400
+            error: "nespravna metoda, pouzijte GET"
+
+    '422':
+      description: Neplatný vstupní parametr
+      content:
+        application/json:
+          example:
+            status: 422
+            error: "nespravny format id, id musi byt cislo v rozsahu celkoveho poctu skol"
