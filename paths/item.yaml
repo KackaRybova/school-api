@@ -1,12 +1,12 @@
 get:
   summary: Detail školy podle ID nebo RED IZO
   description: >
-    Endpoint vrací detailní informace o jedné škole. Školu lze vyhledat pomocí
-    parametru `id` (interní ID školy) nebo `red_izo` (RED IZO školy).
+    Endpoint vrací informace o jedné škole. Školu lze vyhledat pomocí
+    parametru `id` (ID školy v databázi) nebo pomocí `red_izo` (RED IZO školy).
     Parametr `scope` určuje rozsah vrácených dat:
     - `basic` – základní informace o škole
     - `mid` – základ + adresa, emaily, ředitel
-    - `all` – vše včetně budov, kapacit, oborů a míst výkonu činnosti
+    - `all` – všechna data o škole (včetně budov, kapacit, oborů a míst výkonu činnosti)
 
   parameters:
     - in: query
@@ -17,7 +17,7 @@ get:
         minimum: 1
       description: >
         Interní ID školy. Pokud není zadáno, použije se hodnota 1.
-        Musí být v rozsahu celkového počtu škol.
+        Musí být v rozsahu existujících ID v databázi, jinak se vypíše error.
 
     - in: query
       name: red_izo
@@ -39,8 +39,7 @@ get:
         Určuje rozsah vrácených dat:
         - basic: základní informace
         - mid: základ + adresa, emaily, ředitel
-        - all: vše včetně budov, kapacit, oborů a míst výkonu činnosti
-
+        - all: všechna data o škole (včetně budov, kapacit, oborů a míst výkonu činnosti)
   responses:
     '200':
       description: Úspěšná odpověď s detailem školy
@@ -54,44 +53,32 @@ get:
                 properties:
                   total_count:
                     type: integer
-                    example: 9954
-                  links:
+                    description: Celkový počet škol v databázi
+                  info:
                     type: object
                     properties:
-                      self:
-                        type: integer
-                        example: 1
-                      last:
-                        type: integer
-                        example: 9954
-                      next:
-                        type: integer
-                        nullable: true
-                        example: 2
+                      self: { type: integer, description: "id současné školy, která je zobrazena" }
+                      last: { type: integer , description: "id poslední školy v databázi"}
                       previous:
                         type: integer
                         nullable: true
-                        example: null
+                        description: id předchozí školy, může být null, pokud není žádná předchozí škola
+                      next:
+                        type: integer
+                        nullable: true
+                        description: id další školy, může být null, pokud není žádná další škola
 
               data:
                 type: object
                 properties:
-                  s_id:
-                    type: integer
-                  s_red_izo:
-                    type: string
-                  s_ico:
-                    type: integer
-                  s_dis:
-                    type: string
-                  s_full_name:
-                    type: string
-                  s_nick:
-                    type: string
-                  s_legal_form:
-                    type: string
-                  s_estab_type:
-                    type: string
+                  s_id: { type: integer, description: "id současné školy v db, která je zobrazena" }
+                  s_red_izo: { type: string, description: "red izo (rezortní identifikátor) současné školy, která je zobrazena" }
+                  s_ico: { type: integer , description: "ičo školy"}
+                  s_dis: { type: string , description: "název kraje ve kterém se škola nacházi"}
+                  s_full_name: { type: string , description: "úplný název školy"}
+                  s_nick: { type: string , description: "zkrácený název školy"}
+                  s_legal_form: { type: string , description: "právní forma školy"}
+                  s_estab_type: { type: string , description: "typ zřizovatele"}
 
                   address:
                     type: array
@@ -99,168 +86,184 @@ get:
                     items:
                       type: object
                       properties:
-                        a_street: { type: string }
-                        a_h_num: { type: integer }
-                        a_type_h: { type: string }
-                        a_d_num: { type: integer }
-                        a_reg: { type: string }
-                        a_reg_part: { type: string }
-                        a_num_reg_p: { type: string }
-                        a_psc: { type: string }
-                        a_ruian: { type: integer }
-                        a_dis: { type: string }
+                        a_street: { type: string , description: "ulice"}
+                        a_h_num: { type: integer , description: "domovní číslo"}
+                        a_type_h: { type: string , description: "typ domovního čísla"}
+                        a_d_num: { type: integer , description: "číslo obce"}
+                        a_reg: { type: string , description: "obec"}
+                        a_reg_part: { type: string , description: "část obce"}
+                        a_num_reg_p: { type: string , description: "číslo obvodu Prahy"}
+                        a_psc: { type: string , description: "poštovní směrovací číslo"}
+                        a_ruian: { type: integer , description: "ruian"}
+                        a_dis: { type: string , description: "okres"}
 
                   emails:
                     type: array
+                    description: Pole s emaily na kontaktní osoby školy
                     nullable: true
                     items:
                       type: string
 
                   principal:
                     type: object
+                    description: Pole s údaji o řediteli
                     nullable: true
                     properties:
-                      p_per: { type: string }
-                      p_stat: { type: integer }
-                      p_creation_fc: { type: string, format: date }
+                      p_per: { type: string, description: "Jméno ředitele" }
+                      p_stat: { type: bool , description: "zda je osoba statutár"}
+                      p_creation_fc:
+                        type: string
+                        format: date
+                        description: datum vzniku funkce, formát YYYY-MM-DD
 
                   building:
                     type: array
+                    description: Pole s údaji o zařízení spadající pod školu
                     nullable: true
                     items:
                       type: object
                       properties:
-                        b_izo: { type: string }
-                        b_full_name: { type: string }
-                        b_type: { type: string }
-                        b_lang: { type: string }
-                        b_date_or: { type: string, format: date }
-                        b_date_work: { type: string, format: date }
+                        b_izo: { type: string, description:"izo budovy"}
+                        b_full_name: { type: string , description:"úplný název zařízení"}
+                        b_type: { type: string , description:"druh zařízení"}
+                        b_lang: { type: string , description:"jazyk"}
+                        b_date_or:
+                          type: string
+                          format: date
+                          description: Datum zápisu ve formátu YYYY-MM-DD
+                        b_date_work:
+                          type: string
+                          format: date
+                          description: Datum činosti od, ve formátu YYYY-MM-DD
 
                         capacity:
                           type: array
                           items:
                             type: object
                             properties:
-                              c_unit: { type: string }
-                              c_count: { type: integer }
+                              c_unit: { type: string, description:"měrná jednotka kapacity" }
+                              c_count: { type: integer , description:"kapacita - počet" }
 
                         fields:
                           type: array
+                          description: pole s dostupnými obory na škole
                           items:
                             type: object
                             properties:
-                              f_code: { type: string }
-                              f_name: { type: string }
-                              f_form_edu: { type: string }
-                              f_len_edu: { type: string }
-                              f_lang: { type: string }
-                              f_capacity: { type: integer }
-                              f_unit: { type: string }
-                              f_ending: { type: string }
+                              f_code: { type: string , description:"kód oboru"}
+                              f_name: { type: string , description:"název oboru" }
+                              f_form_edu: { type: string , description:"typ vzdělávání" }
+                              f_len_edu: { type: string , description:"délka vzdělávání" }
+                              f_lang: { type: string , description:"jazyk oboru" }
+                              f_capacity: { type: integer , description:"kapacita oboru" }
+                              f_unit: { type: string , description:"měrná jednotka kapacity" }
+                              f_ending: { type: bool , description:"dobíhající obor" }
 
                         places:
                           type: array
                           items:
                             type: object
                             properties:
-                              pl_id: { type: string }
-                              pl_type: { type: string }
-                              pl_street: { type: string }
-                              pl_h_num: { type: integer }
-                              pl_type_h: { type: string }
-                              pl_d_num: { type: integer }
-                              pl_reg: { type: string }
-                              pl_peg_part: { type: string }
-                              pl_num_reg_p: { type: string }
-                              pl_psc: { type: string }
-                              pl_ruian: { type: integer }
-                              pl_dis: { type: string }
+                              pl_id: { type: string , description:"id místa kde se zařízení nachází" }
+                              pl_type: { type: string , description:"typ místa" }
+                              pl_street: { type: string , description:"ulice" }
+                              pl_h_num: { type: integer , description:"domovní číslo" }
+                              pl_type_h: { type: string , description:"typ domovního čísla" }
+                              pl_d_num: { type: integer , description:"číslo obce" }
+                              pl_reg: { type: string , description:"obec" }
+                              pl_peg_part: { type: string , description:"část obce" }
+                              pl_num_reg_p: { type: string , description:"číslo obvodu Prahy" }
+                              pl_psc: { type: string , description:"poštovní směrovací číslo" }
+                              pl_ruian: { type: integer , description:"ruian" }
+                              pl_dis: { type: string , description:"okres" }
 
           examples:
-            all_scope:
+            scope_all_example:
+              summary: Ukázkový výstup pro scope=all
               value:
                 meta:
                   total_count: 9954
-                  links:
-                    self: 1
+                  info:
+                    self: 7591
                     last: 9954
-                    next: 2
-                    previous: null
+                    previous: 7590
+                    next: 7592
                 data:
-                  s_id: 1
-                  s_red_izo: "600000206"
-                  s_ico: 49625918
+                  s_id: 7591
+                  s_red_izo: "600170039"
+                  s_ico: 14891239
                   s_dis: "Hlavní město Praha"
-                  s_full_name: "Mateřská škola sv. Voršily v Praze"
-                  s_nick: "Mateřská škola sv. Voršily v Praze"
-                  s_legal_form: "641"
-                  s_estab_type: "6"
+                  s_full_name: "Střední průmyslová škola na Proseku"
+                  s_nick: "Střední průmyslová škola na Proseku"
+                  s_legal_form: "331"
+                  s_estab_type: "7"
                   address:
-                    - a_street: "Ostrovní"
-                      a_h_num: 139
+                    - a_street: "Novoborská"
+                      a_h_num: 610
                       a_type_h: "č.p."
-                      a_d_num: 11
+                      a_d_num: 2
                       a_reg: "Praha"
-                      a_reg_part: "Nové Město"
-                      a_num_reg_p: "Praha 1"
-                      a_psc: "110 00"
-                      a_ruian: 21702101
-                      a_dis: "CZ0101"
+                      a_reg_part: "Prosek"
+                      a_num_reg_p: "Praha 9"
+                      a_psc: "190 00"
+                      a_ruian: 22507507
+                      a_dis: "CZ0109"
                   emails:
-                    - "reditelka@mssvvorsily.cz"
-                    - "cmsostrovni@tiscali.cz"
+                    - "reditel@sps-prosek.cz"
+                    - "sps-prosek@sps-prosek.cz"
                   principal:
-                    p_per: "Anna Luňáčková"
+                    p_per: "Ing. Lukáš Procházka"
                     p_stat: 1
-                    p_creation_fc: "1996-05-16"
+                    p_creation_fc: "2023-03-10"
                   building:
-                    - b_izo: "049625918"
-                      b_full_name: "Mateřská škola"
-                      b_type: "A00"
+                    - b_izo: "014891221"
+                      b_full_name: "Střední škola"
+                      b_type: "C00"
                       b_lang: "100"
                       b_date_or: "2005-01-01"
-                      b_date_work: "1996-05-16"
+                      b_date_work: "1996-07-19"
                       capacity:
-                        - c_unit: "04"
-                          c_count: 54
-                      fields: []
+                        - c_unit: "01"
+                          c_count: 720
+                      fields:
+                        - f_code: "26-41-M/01"
+                          f_name: "Elektrotechnika"
+                          f_form_edu: "10"
+                          f_len_edu: "40"
+                          f_lang: "10"
+                          f_capacity: 256
+                          f_unit: "01"
+                          f_ending: 0
+                        - f_code: "18-20-M/01"
+                          f_name: "Informační technologie"
+                          f_form_edu: "10"
+                          f_len_edu: "40"
+                          f_lang: "10"
+                          f_capacity: 272
+                          f_unit: "01"
+                          f_ending: 0
+                        - f_code: "23-41-M/01"
+                          f_name: "Strojírenství"
+                          f_form_edu: "10"
+                          f_len_edu: "40"
+                          f_lang: "10"
+                          f_capacity: 256
+                          f_unit: "01"
+                          f_ending: 0
                       places:
-                        - pl_id: "049625918"
-                          pl_type: "A10"
-                          pl_street: "Ostrovní"
-                          pl_h_num: 139
+                        - pl_id: "014891221"
+                          pl_type: "C31"
+                          pl_street: "Novoborská"
+                          pl_h_num: 610
                           pl_type_h: "č.p."
-                          pl_d_num: 11
+                          pl_d_num: 2
                           pl_reg: "Praha"
-                          pl_peg_part: "Nové Město"
-                          pl_num_reg_p: "Praha 1"
-                          pl_psc: "110 00"
-                          pl_ruian: 21702101
+                          pl_peg_part: "Prosek"
+                          pl_num_reg_p: "Praha 9"
+                          pl_psc: "190 00"
+                          pl_ruian: 22507507
                           pl_dis: ""
-                    - b_izo: "102413096"
-                      b_full_name: "Školní jídelna"
-                      b_type: "L11"
-                      b_lang: "100"
-                      b_date_or: "2005-01-01"
-                      b_date_work: "1996-05-16"
-                      capacity:
-                        - c_unit: "03"
-                          c_count: 90
-                      fields: []
-                      places:
-                        - pl_id: "102413096"
-                          pl_type: "L11"
-                          pl_street: "Ostrovní"
-                          pl_h_num: 139
-                          pl_type_h: "č.p."
-                          pl_d_num: 11
-                          pl_reg: "Praha"
-                          pl_peg_part: "Nové Město"
-                          pl_num_reg_p: "Praha 1"
-                          pl_psc: "110 00"
-                          pl_ruian: 21702101
-                          pl_dis: ""
+
     '400':
       description: Chybná metoda – endpoint podporuje pouze GET
       content:
