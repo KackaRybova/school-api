@@ -110,7 +110,7 @@ get:
                     nullable: true
                     properties:
                       p_per: { type: string, description: "Jméno ředitele" }
-                      p_stat: { type: bool , description: "zda je osoba statutár"}
+                      p_stat: { type: boolean , description: "zda je osoba statutár"}
                       p_creation_fc:
                         type: string
                         format: date
@@ -157,7 +157,7 @@ get:
                               f_lang: { type: string , description:"jazyk oboru" }
                               f_capacity: { type: integer , description:"kapacita oboru" }
                               f_unit: { type: string , description:"měrná jednotka kapacity" }
-                              f_ending: { type: bool , description:"dobíhající obor" }
+                              f_ending: { type: boolean , description:"dobíhající obor" }
 
                         places:
                           type: array
@@ -171,7 +171,7 @@ get:
                               pl_type_h: { type: string , description:"typ domovního čísla" }
                               pl_d_num: { type: integer , description:"číslo obce" }
                               pl_reg: { type: string , description:"obec" }
-                              pl_peg_part: { type: string , description:"část obce" }
+                              pl_reg_part: { type: string , description:"část obce" }
                               pl_num_reg_p: { type: string , description:"číslo obvodu Prahy" }
                               pl_psc: { type: string , description:"poštovní směrovací číslo" }
                               pl_ruian: { type: integer , description:"ruian" }
@@ -258,7 +258,7 @@ get:
                           pl_type_h: "č.p."
                           pl_d_num: 2
                           pl_reg: "Praha"
-                          pl_peg_part: "Prosek"
+                          pl_reg_part: "Prosek"
                           pl_num_reg_p: "Praha 9"
                           pl_psc: "190 00"
                           pl_ruian: 22507507
