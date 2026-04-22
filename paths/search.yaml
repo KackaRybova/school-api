@@ -1,0 +1,239 @@
+get:
+  summary: Vyhledávání škol pomocí filtrů
+  description: >
+    Endpoint umožňuje vyhledávat školy podle názvu (`search`), kraje (`dis`) nebo
+    oboru vzdělání (`field`). Podporuje stránkování pomocí parametrů `page` a `per`.
+    Vrací meta informace o stránkování a seznam škol odpovídajících filtrům.
+  
+    Příklad použití:
+    `/Weby/api_endpoint/search.php?search=Gymnázium&dis=Praha&field=79&page=1&per=20`
+  
+  parameters:
+    - in: query
+      name: search
+      schema:
+        type: string
+      required: false
+      description: >
+        Vyhledávání škol podle názvu školy (`s_upl_nazev`).
+        Je case‑sensitive.
+  
+    - in: query
+      name: dis
+      schema:
+        type: string
+      required: false
+      description: >
+        Filtrování podle kraje (`s_kraj`). Hodnota nesmí obsahovat číslice.
+        Pokud obsahuje číslo, endpoint vrací chybu 422. Je case-sensitive.
+  
+    - in: query
+      name: field
+      schema:
+        type: string
+      required: false
+      description: >
+        Filtrování podle oboru vzdělání (`f_kod`). Hodnota nesmí obsahovat mezery.
+        Pokud obsahuje mezeru nebo je prázdná, endpoint vrací chybu 422.
+  
+    - in: query
+      name: per
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+      required: false
+      description: >
+        Počet položek na stránku (výchozí hodnota je 10).
+        Pokud není číslo nebo je mimo rozsah 1–100, vrací se chyba 422.
+  
+    - in: query
+      name: page
+      schema:
+        type: integer
+        minimum: 1
+      required: false
+      description: >
+        Číslo aktuální stránky (výchozí hodnota je 1).
+        Pokud není číslo nebo je mimo rozsah 1 až celkový počet stran, vrací se chyba 422.
+  
+  responses:
+    '200':
+      description: Úspěšná odpověď
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                description: Informace o stránkování
+                properties:
+                  page:
+                    type: integer
+                    example: 1
+                    description: Aktuální stránka
+                  per_page:
+                    type: integer
+                    example: 10
+                    description: Maximalní počat škol vypsaných na jedné stránce
+                  page_count:
+                    type: integer
+                    example: 50
+                    description: Celkový počet stran
+                  total_count:
+                    type: integer
+                    example: 500
+                    description: Celkový počet škol odpovídajících hledání
+                  links:
+                    type: object
+                    nullable: true
+                    description: Objekt s informacemi o stránkování
+                    properties:
+                      self:
+                        type: integer
+                        example: 1
+                        description: číslo aktuální stránky
+                      first:
+                        type: integer
+                        example: 1
+                        description: číslo první stránky
+                      last:
+                        type: integer
+                        example: 50
+                        description: číslo poslední stránky
+                      next:
+                        type: integer
+                        nullable: true
+                        example: 2
+                        description: číslo následující stránky
+                      previous:
+                        type: integer
+                        nullable: true
+                        example: null
+                        description: číslo předchozí stránky
+  
+              data:
+                type: array
+                description: Pole škol odpovídající hledání
+                items:
+                  type: object
+                  properties:
+                    s_id:
+                      type: integer
+                      example: 41
+                      description: ID školy v databázi
+                    s_red_izo:
+                      type: string
+                      example: "600001008"
+                      description: red izo školy (resortní identifikátor právnické osoby). Slouží jako hlavní identifikátor školy
+                    s_ico:
+                      type: integer
+                      example: 47813245
+                      description: ičo školy
+                    s_dis:
+                      type: string
+                      example: "Moravskoslezský kraj"
+                      description: kraj ve kterém se škola nachází
+                    s_full_name:
+                      type: string
+                      example: "Církevní mateřská škola"
+                      description: celý název školy
+                    s_nick:
+                      type: string
+                      example: "Církevní mateřská škola"
+                      description: zkrácený název školy
+                    s_legal_form:
+                      type: string
+                      example: "641"
+                      description: kód právní formy (číselník BBPF)
+                    s_estab_type:
+                      type: string
+                      example: "6"
+                      description: kód typu zřizovatele (číselník BAZS)
+  
+          examples:
+            ok:
+              value:
+                meta:
+                  page: 1
+                  per_page: 10
+                  page_count: 50
+                  total_count: 500
+                  links:
+                    self: 1
+                    first: 1
+                    last: 50
+                    next: 2
+                    previous: null
+                data:
+                  - s_id: 41
+                    s_red_izo: "600001008"
+                    s_ico: 47813245
+                    s_dis: "Moravskoslezský kraj"
+                    s_full_name: "Církevní mateřská škola"
+                    s_nick: "Církevní mateřská škola"
+                    s_legal_form: "641"
+                    s_estab_type: "6"
+  
+            no_results:
+              value:
+                meta:
+                  page: 1
+                  per_page: 10
+                  page_count: 0
+                  total_count: 0
+                  links: null
+                data: []
+  
+            db_down:
+              value:
+                status: 200
+                error: "selhalo pripojeni k databazi"
+                db_info:
+                  connected: false
+                  error: "chybova hlaska"
+  
+    '400':
+      description: Chybná metoda
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+              error:
+                type: string
+          example:
+            status: 400
+            error: "nespravna metoda, pouzijte GET"
+  
+    '422':
+      description: Neplatné vstupní parametry
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+              error:
+                type: string
+          examples:
+            invalid_dis:
+              value:
+                status: 422
+                error: "nespravny format dis, dis nesmi obsahovat cisla"
+            invalid_field:
+              value:
+                status: 422
+                error: "nespravny format field, field nesmi obsahovat mezery"
+            invalid_per:
+              value:
+                status: 422
+                error: "nespravny format per, per musi byt cislo v rozsahu 10-100"
+            invalid_page:
+              value:
+                status: 422
+                error: "nespravny format page, page musi byt cislo v rozsahu 1 az celkovy pocet stran"
