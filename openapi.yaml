@@ -16,3 +16,5 @@ paths:
     $ref: "./paths/items.yaml"
   /item.php:
     $ref: "./paths/item.yaml"
+  /search.php:
+  $ref: "./paths/search.yaml"
