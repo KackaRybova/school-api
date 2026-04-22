@@ -218,6 +218,10 @@ get:
               error:
                 type: string
           examples:
+            missing_filters:
+              value:
+                status: 422
+                error: "musite zadat alespon jeden z parametru"
             invalid_dis:
               value:
                 status: 422
