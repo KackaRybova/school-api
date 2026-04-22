@@ -17,4 +17,4 @@ paths:
   /item.php:
     $ref: "./paths/item.yaml"
   /search.php:
-  $ref: "./paths/search.yaml"
+    $ref: "./paths/search.yaml"
