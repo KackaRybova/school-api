@@ -1,0 +1,89 @@
+post:
+  summary: Generování dočasného přístupového tokenu k API
+  description: >
+    Endpoint slouží k autentizaci uživatele a vygenerování dočasného přístupového tokenu.
+    Jako vstup vyžaduje klíč (`secret_key`) odeslaný v těle požadavku jako JSON.
+    Vygenerovaný token má omezenou platnost na 10 minut a slouží k autorizaci
+    následných požadavků na zabezpečené endpointy API.
+
+    Příklad použití: /Weby/api_endpoint/token.php
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - secret_key
+          properties:
+            secret_key:
+              type: string
+              example: "81f802edfdf455e5a1b7c47ac255d2584f9fab31373b8b8bc390d17f00f8d8de"
+              description: Nehashovaný API klíč uživatele vygenerovaný v administraci.
+  responses:
+    '200':
+      description: Úspěšná odpověď
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+                description: status odpovědi
+              message:
+                type: string
+                example: "token uspesne vygenerovan a ulozen v db"
+                description: potvrzení o úspěšném zpracování
+              token:
+                type: string
+                example: "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
+                description: Vygenerovaný dočasný token, který se následně používá v hlavičce Authorization.
+          examples:
+            ok:
+              value:
+                status: 200
+                message: "token uspesne vygenerovan a ulozen v db"
+                token: "60ce5d18baec29c018260bb77732d847"
+            db_down:
+              value:
+                status: 200
+                error: "selhalo pripojeni k databazi"
+                db_info:
+                  connected: false
+                  error: "chybova hlaska"
+    '400':
+      description: Chybný požadavek (neplatný JSON, chybějící nebo nesprávný klíč)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                description: status odpovědi
+              error:
+                type: string
+                description: chybová hláška
+          examples:
+            wrong_method:
+              summary: Nesprávná HTTP metoda
+              value:
+                status: 400
+                error: "nespravna metoda, pouzijte POST"
+            invalid_json:
+              summary: Nevalidní formát dat
+              value:
+                status: 400
+                error: "nespravny format JSON"
+            missing_key:
+              summary: Chybějící parametr v JSONu
+              value:
+                status: 400
+                error: "chybi secret_key"
+            invalid_key:
+              summary: Neplatný klíč (neexistuje v DB)
+              value:
+                status: 400
+                error: "neplatny secret_key"
