@@ -9,6 +9,16 @@ get:
     - `all` – všechna data o škole (včetně budov, kapacit, oborů a míst výkonu činnosti)
 
   parameters:
+    - in: header
+      name: Authorization
+      required: true
+      schema:
+        type: string
+      example: "Bearer 60ce5d18baec29c018260bb77732d847"
+      description: >
+        Autorizační token ve formátu `Bearer <token>`. Bez tohoto tokenu (nebo pokud vypršela 
+        jeho 10minutová platnost) nebude přístup k datům povolen.
+        
     - in: query
       name: id
       required: false
@@ -264,6 +274,30 @@ get:
                           pl_ruian: 22507507
                           pl_dis: ""
 
+    '401':
+      description: Neautorizovaný přístup (chybějící, neplatný nebo expirovaný token)
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                description: status odpovědi
+              error:
+                type: string
+                description: chybová hláška
+          examples:
+            missing_header:
+              summary: Chybyjící hlavička Authorization
+              value:
+                status: 401
+                error: "Chybi autorizacni hlavicka (Authorization)"
+            invalid_token:
+              summary: Neplatný nebo expirovaný token
+              value:
+                status: 401
+                error: "Neplatny nebo expirovany token. Vygenerujte si novy."
     '400':
       description: Chybná metoda – endpoint podporuje pouze GET
       content:
