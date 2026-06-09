@@ -9,7 +9,7 @@ get:
     `/Weby/api_endpoint/search.php?search=Gymnázium&dis=Praha&field=79&page=1&per=20`
   
   parameters:
-  - in: header
+    - in: header
       name: Authorization
       required: true
       schema:
