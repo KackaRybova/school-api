@@ -4,7 +4,7 @@ post:
     Endpoint slouží k autentizaci uživatele a vygenerování dočasného přístupového tokenu.
     Jako vstup vyžaduje klíč (`secret_key`) odeslaný v těle požadavku jako JSON.
     Vygenerovaný token má omezenou platnost na 10 minut a slouží k autorizaci
-    následných požadavků na zabezpečené endpointy API.
+    následných požadavků na zabezpečené endpointy API. Klíč je možné se vygenerovat v administraci v sekci 'Profil' (ikona profilu uživatele).
 
     Příklad použití: /Weby/api_endpoint/token.php
   requestBody:
