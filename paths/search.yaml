@@ -4,10 +4,9 @@ get:
     Endpoint umožňuje vyhledávat školy podle názvu (`search`), kraje (`dis`) nebo
     oboru vzdělání (`field`). Podporuje stránkování pomocí parametrů `page` a `per`.
     Vrací meta informace o stránkování a seznam škol odpovídajících filtrům.
-  
+
     Příklad použití:
     `/Weby/api_endpoint/search.php?search=Gymnázium&dis=Praha&field=79&page=1&per=20`
-  
   parameters:
     - in: header
       name: Authorization
@@ -26,7 +25,7 @@ get:
       required: false
       description: >
         Vyhledávání škol podle názvu školy (`s_upl_nazev`).
-        Je case‑sensitive.
+        Je case-sensitive.
   
     - in: query
       name: dis
@@ -120,7 +119,6 @@ get:
                         nullable: true
                         example: null
                         description: číslo předchozí stránky
-  
               data:
                 type: array
                 description: Pole škol odpovídající hledání
@@ -182,7 +180,6 @@ get:
                     s_nick: "Církevní mateřská škola"
                     s_legal_form: "641"
                     s_estab_type: "6"
-  
             no_results:
               value:
                 meta:
@@ -192,7 +189,6 @@ get:
                   total_count: 0
                   links: null
                 data: []
-  
             db_down:
               value:
                 status: 200
@@ -200,7 +196,6 @@ get:
                 db_info:
                   connected: false
                   error: "chybova hlaska"
-  
     '401':
       description: Neautorizovaný přístup (chybějící, neplatný nebo expirovaný token)
       content:
@@ -225,7 +220,6 @@ get:
               value:
                 status: 401
                 error: "Neplatny nebo expirovany token. Vygenerujte si novy."
-    
     '400':
       description: Chybná metoda
       content:
@@ -235,12 +229,15 @@ get:
             properties:
               status:
                 type: integer
+                description: status odpovědi
               error:
                 type: string
-          example:
-            status: 400
-            error: "nespravna metoda, pouzijte GET"
-  
+                description: chybová hláška
+          examples:
+            wrong_method:
+              value:
+                status: 400
+                error: "nespravna metoda, pouzijte GET"
     '422':
       description: Neplatné vstupní parametry
       content:
@@ -250,8 +247,10 @@ get:
             properties:
               status:
                 type: integer
+                description: status odpovědi
               error:
                 type: string
+                description: chybová hláška
           examples:
             missing_filters:
               value:
